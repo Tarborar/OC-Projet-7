@@ -52,12 +52,12 @@ exports.login = (req, res, next) =>{
                 token: jwt.sign( //chiffre les objets suivant pour en créer un token
                     {userId: user._id},
                     'RANDOM_TOKEN_SECRET',
-                    {expires: '24h'} //stock le token 24h
+                    {expiresIn: '24h'} //stock le token 24h
                 ) 
             });  
         })
         .catch(error => {
-            console.log('bcrypt compare échoué');
+            console.log(error);
             res.status(500).json({error})
         });
     })
