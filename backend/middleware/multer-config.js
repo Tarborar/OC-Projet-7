@@ -13,7 +13,7 @@ const storage = multer.diskStorage({ //enregistre sur le disque
     callback(null, 'images') //enregistre dans le dossier images
   },
   filename: (req, file, callback) =>{
-    const name = file.originalname.split(' ').join('_'); //nom d'origine + remplace tous les espaces par des _ pour éviter problème serveur
+    const name = file.originalname.split(' ').join('_').replace(/\.[^.]*$/,'');  //nom d'origine + remplace tous les espaces par des _ + supprime l'extension
     const extension = MIME_TYPES[file.mimetype];
     callback(null, name + Date.now() + '.' + extension); //ajoute la date pour le rendre plus unique
   }

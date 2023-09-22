@@ -14,7 +14,7 @@ mongoose.connect(process.env.MONGODB_URI,
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-app.use(express.json()); //intercepte toutes les requêtes qui ont un content-type json
+app.use(express.json()); //intercepte toutes les requêtes qui ont un content-type json -> json dans req.body
 
 //CORS -> Contrôle les requêtes HTTP
 app.use((req, res, next) => {

@@ -4,12 +4,29 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 
+const passwordRegex = /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/; //au moins une lettre majuscule, une lettre minuscule, un chiffre, et a une longueur minimale de 6 caractères
+const emailRegex = /^([a-z0-9_\.-]+\@[\da-z\.-]+\.[a-z\.]{2,6})$/; //format email
+
 exports.signup = (req, res, next) =>{
-    bcrypt.hash(req.body.password, 10) //corps de la requête + 10 tours de "salt"
+    //on récupère l'email et le mdp envoyés par l'utilisateur
+    const password = req.body.password;
+    const email = req.body.email;
+
+    //on vérifie la complexité du mdp
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({ error: 'Le mot de passe ne respecte pas les critères de complexité.' });
+    }
+
+    //on vérifie le format de l'email
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "L'adresse e-mail n'est pas valide." });
+    }
+
+    bcrypt.hash(password, 10) //corps de la requête + 10 tours de "salt"
     .then(hash => {
         console.log('requête post du hash réussi');
         const user = new User({
-            email: req.body.email,
+            email: email,
             password: hash //enregistre le hash pour ne pas stocker le mot de passe en brut
         });
 
@@ -52,7 +69,7 @@ exports.login = (req, res, next) =>{
                 token: jwt.sign( //chiffre les objets suivant pour en créer un token
                     {userId: user._id},
                     'RANDOM_TOKEN_SECRET',
-                    {expiresIn: '24h'} //stock le token 24h
+                    {expiresIn: '4h'} //stock le token 24h
                 ) 
             });  
         })
